@@ -1,0 +1,9 @@
+---
+
+- hosts: storagenodes
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Stop Gluster
+      command: killall glusterd
+      ignore_errors: true

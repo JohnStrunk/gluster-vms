@@ -1,0 +1,5 @@
+---
+
+- include: ./g_stop.yml
+- include: ./install.yml
+- include: ./g_start.yml

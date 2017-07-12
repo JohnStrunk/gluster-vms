@@ -1,0 +1,114 @@
+---
+
+- name: Upgrade host to latest version
+  dnf:
+    name: "*"
+    state: latest
+- name: Install development packages
+  dnf:
+    name: "{{item}}"
+    state: latest
+  with_items:
+    - attr
+    - autoconf
+    - automake
+    - bison
+    - libcmocka-devel
+    - cifs-utils
+    - dbench
+    - dos2unix
+    - e2fsprogs
+    - findutils
+    - flex
+    - fuse-devel
+    - fuse-libs
+    - gcc
+    - gdb
+    - git
+    - glib2-devel
+    - hostname
+    - libacl-devel
+    - libaio-devel
+    - libattr-devel
+    - libibverbs-devel
+    - librdmacm-devel
+    - libtool
+    - libxml2-devel
+    - lvm2-devel
+    - make
+    - man-db
+    - mock
+    - net-tools
+    - nfs-ganesha-gluster
+    - nfs-utils
+    - openssh-server
+    - openssl-devel
+    - perl-Test-Harness
+    - pkgconfig
+    - procps-ng
+    - psmisc
+    - python-devel
+    - python-eventlet
+    - python-netifaces
+    - python-paste-deploy
+    - python-setuptools
+    - python-simplejson
+    - python-sphinx
+    - python-webob
+    - pyxattr
+    - readline-devel
+    - rpm-build
+    - screen
+    - strace
+    - supervisor
+    - systemtap-sdt-devel
+    - sqlite-devel
+    - samba*
+    - userspace-rcu-devel
+    - vim
+    - wget
+    - which
+    - xfsprogs
+    - yajl-devel
+- name: Install helper packages
+  dnf:
+    name: "{{item}}"
+    state: latest
+  with_items:
+    - cgdb
+    - clang
+    - lsof
+    - perf
+    - sysstat
+    - systemtap
+    - systemtap-runtime
+    - tcpdump
+    - valgrind
+- name: Remove gluster packages
+  shell: rpm -ev --nodeps `rpm -qa | grep ^gluster`
+  ignore_errors: true
+- name: Create jstrunk group
+  group:
+    name: jstrunk
+    gid: 101587
+- name: Create jstrunk user
+  user:
+    name: jstrunk
+    uid: 101587
+    groups: jstrunk
+    append: true
+- name: Create .ssh dir
+  file:
+    path: /home/jstrunk/.ssh
+    state: directory
+    owner: jstrunk
+    group: jstrunk
+    mode: 0755
+- name: Add authorized keys to jstrunk
+  command: cp /home/vagrant/.ssh/authorized_keys /home/jstrunk/.ssh/authorized_keys
+- name: Fix authorized keys perms
+  file:
+    path: /home/jstrunk/.ssh/authorized_keys
+    owner: jstrunk
+    group: jstrunk
+    mode: 0600

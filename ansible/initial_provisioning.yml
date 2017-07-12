@@ -1,0 +1,11 @@
+---
+
+- hosts: all
+  become: true
+  roles:
+    - base_system
+
+- hosts: storagenodes
+  become: true
+  roles:
+    - create_bricks

@@ -1,0 +1,27 @@
+---
+
+- hosts: all
+  become: true
+  vars:
+    srcdir: /home/jstrunk/src/glusterfs
+  tasks:
+    - name: Create {{ srcdir }}
+      file:
+        path: "{{ srcdir }}"
+        state: directory
+    - name: Sync files
+      synchronize:
+        archive: true
+        compress: false
+        delete: true
+        src: "{{ srcdir }}/"
+        dest: "{{ srcdir }}"
+        rsync_opts:
+          - "--exclude=.git"
+    - name: install
+      command: make install
+      args:
+        chdir: "{{ srcdir }}"
+      register: i
+    - debug: var=i.stdout_lines
+    - debug: var=i.stderr_lines

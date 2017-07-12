@@ -1,0 +1,29 @@
+- name: Create mount point
+  file:
+    name: "/mnt/bricks"
+    state: directory
+- name: Ensure file systems are not mounted
+  mount:
+    path: /mnt/bricks
+    state: unmounted
+- name: Set up data partition
+  parted:
+    device: "/dev/vdb"
+    number: 1
+    state: present
+- name: Format xfs file systems
+  filesystem:
+    fstype: xfs
+    dev: /dev/vdb1
+    opts: -i size=512
+- name: Mount file systems
+  mount:
+    path: /mnt/bricks
+    src: /dev/vdb1
+    fstype: xfs
+    state: mounted
+- name: Create brick directories
+  file:
+    name: "/mnt/bricks/b{{item}}"
+    state: directory
+  with_sequence: start=0 end=99 format=%02d

@@ -1,0 +1,6 @@
+---
+
+- hosts: storagenodes
+  become: true
+  roles:
+    - create_bricks

@@ -1,0 +1,15 @@
+---
+
+- include: ./g_stop.yml
+- hosts: storagenodes
+  become: true
+  gather_facts: false
+  tasks:
+    - name: Start Gluster
+      command: /bin/bash -c "env PATH=$PATH:/usr/local/bin:/usr/local/sbin glusterd"
+- hosts: storage0
+  become: true
+  tasks:
+    - name: Peer probe
+      command: /usr/local/sbin/gluster peer probe {{ item }}
+      with_items: "{{ groups['storagenodes'] }}"
