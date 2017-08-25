@@ -1,0 +1,18 @@
+#! /bin/bash
+
+gluster volume create \
+    $1 \
+    replica 3 arbiter 1 \
+    \
+    storage0:/mnt/bricks/b00 \
+    storage1:/mnt/bricks/b00 \
+    storage2:/mnt/bricks/b00 \
+    \
+    storage1:/mnt/bricks/b01 \
+    storage2:/mnt/bricks/b01 \
+    storage0:/mnt/bricks/b01 \
+    \
+    storage2:/mnt/bricks/b02 \
+    storage0:/mnt/bricks/b02 \
+    storage1:/mnt/bricks/b02 \
+

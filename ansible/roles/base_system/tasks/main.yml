@@ -4,9 +4,10 @@
   dnf:
     name: "*"
     state: latest
+
 - name: Install development packages
   dnf:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: latest
   with_items:
     - attr
@@ -70,9 +71,10 @@
     - which
     - xfsprogs
     - yajl-devel
+
 - name: Install helper packages
   dnf:
-    name: "{{item}}"
+    name: "{{ item }}"
     state: latest
   with_items:
     - cgdb
@@ -84,19 +86,23 @@
     - systemtap-runtime
     - tcpdump
     - valgrind
-- name: Remove gluster packages
-  shell: rpm -ev --nodeps `rpm -qa | grep ^gluster`
-  ignore_errors: true
+
+#- name: Remove gluster packages
+#  shell: rpm -ev --nodeps `rpm -qa | grep ^gluster`
+#  ignore_errors: true
+
 - name: Create jstrunk group
   group:
     name: jstrunk
     gid: 101587
+
 - name: Create jstrunk user
   user:
     name: jstrunk
     uid: 101587
     groups: jstrunk
     append: true
+
 - name: Create .ssh dir
   file:
     path: /home/jstrunk/.ssh
@@ -104,8 +110,10 @@
     owner: jstrunk
     group: jstrunk
     mode: 0755
+
 - name: Add authorized keys to jstrunk
   command: cp /home/vagrant/.ssh/authorized_keys /home/jstrunk/.ssh/authorized_keys
+
 - name: Fix authorized keys perms
   file:
     path: /home/jstrunk/.ssh/authorized_keys

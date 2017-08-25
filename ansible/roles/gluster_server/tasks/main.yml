@@ -1,0 +1,31 @@
+---
+
+- name: Install gluster server packages
+  dnf:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - glusterfs-server
+
+- name: Create LVM VG
+  lvg:
+    pvs: /dev/vdb
+    vg: vg_brick
+
+- name: Create VG thin pool
+  command: lvcreate -l 100%FREE --thinpool vg_brick/pool
+  args:
+    creates: /dev/mapper/vg_brick-pool
+
+  # rpcbind will fail to start the 1st time if selinux is enforcing
+  # https://bugzilla.redhat.com/show_bug.cgi?id=1474593
+- name: Set permissive mode for SELinux
+  selinux:
+    policy: targeted
+    state: permissive
+
+- name: Start gluster server
+  systemd:
+    name: glusterd
+    enabled: yes
+    state: started

@@ -1,11 +1,39 @@
 ---
+##############################
+# This is the start of the Ansible-based provisioning
 
+#-- Install prereqs for Ansible to run
 - hosts: all
+  become: true
+  gather_facts: no
+  tasks:
+    - name: Install Python
+      raw: "dnf install -y python"
+
+    - name: Install SELinux Python
+      dnf:
+        name: libselinux-python
+        state: latest
+
+
+#-- Clients become gluster clients
+- hosts: clients
   become: true
   roles:
     - base_system
+    - gluster_client
 
+#-- Storage nodes become gluster servers
 - hosts: storagenodes
   become: true
   roles:
-    - create_bricks
+    - base_system
+    - gluster_server
+
+#-- Use the 1st storage node to establish the cluster
+- hosts: storage0
+  become: true
+  tasks:
+    - name: Establish TSP
+      command: gluster peer probe {{ item }}
+      with_items: "{{ groups['storagenodes'] }}"

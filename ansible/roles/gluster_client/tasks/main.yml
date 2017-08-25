@@ -1,0 +1,9 @@
+---
+
+- name: Install gluster client packages
+  dnf:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - glusterfs-fuse
+    - glusterfs-ganesha
