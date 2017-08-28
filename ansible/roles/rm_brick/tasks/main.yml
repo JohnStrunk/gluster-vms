@@ -1,0 +1,18 @@
+# Destroy a previously created brick
+# Requires:
+#   brick_name: the name of the brick
+
+- name: Make sure the brick is not mounted
+  mount:
+    path: /bricks/{{ brick_name }}
+    state: unmounted
+
+- name: Make sure mount point is gone
+  file:
+    state: absent
+    name: /bricks/{{ brick_name }}
+
+- name: Delete LV {{ brick_name }}
+  command: lvremove -f vg_brick/{{ brick_name }}
+  args:
+    removes: /dev/vg_brick/{{ brick_name }}
