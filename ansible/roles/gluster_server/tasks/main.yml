@@ -7,9 +7,20 @@
   with_items:
     - glusterfs-server
 
+  # Set up LVM according to:
+  # https://access.redhat.com/articles/2352211#app_lvm
+- name: Create LVM partition
+  parted:
+    device: /dev/vdb
+    label: msdos
+    part_type: primary
+    number: 1
+    flags: [ lvm ]
+    state: present
+
 - name: Create LVM VG
   lvg:
-    pvs: /dev/vdb
+    pvs: /dev/vdb1
     vg: vg_brick
 
 - name: Create VG thin pool
@@ -29,3 +40,8 @@
     name: glusterd
     enabled: yes
     state: started
+
+- name: Re-enable SELinux enforcing mode
+  selinux:
+    policy: targeted
+    state: enforcing
